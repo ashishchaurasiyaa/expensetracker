@@ -22,10 +22,10 @@ def index(request):
 
         current_balance, _ = CurrentBalance.objects.get_or_create(id=1)
         expense_type = "CREDIT"
-        if amount < 0:
+        if float(amount) < 0:
             expense_type = "DEBIT"
 
-        if amount == 0:
+        if float(amount) == 0:
             messages.error(request, "Amount cannot be zero.")
             return redirect('/')
 
