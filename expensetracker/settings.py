@@ -147,6 +147,9 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'public/media')
 
+ADMIN_SITE_HEADER = "Expense Tracker"
+ADMIN_SITE_TITLE = "Expense Tracker"
+
 
 
 # Default primary key field type

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,66 +10,72 @@
 </head>
 <body>
 
-<h1>Expense Tracker</h1>
-<div class="container">
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {{ message }}
+{% block content %}
+    <h1>Expense Tracker</h1>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <img src="https://i.ibb.co/jfScDTC/budget.png" alt="Expense Tracker"/>
+            <div class="balance-container">
+                <h2>Your Balance</h2>
+                <h2 id="balance" class="balance">₹{{ current_balance.current_balance }}</h2>
+            </div>
+        </div>
+
+        <div class="inc-exp-container">
+            <div>
+                <h4>Income</h4>
+                <p id="money-plus" class="money plus">+₹{{ income }}</p>
+            </div>
+            <div>
+                <h4>Expenses</h4>
+                <p id="money-minus" class="money minus">₹{{ expense }}</p>
+            </div>
+        </div>
+
+        <h3>History</h3>
+        <ul id="list" class="list">
+            {% for transaction in transactions %}
+                <li class="{% if transaction.expense_type == 'DEBIT' %} minus {% else %} plus {% endif %}">
+                    {{ transaction.description }} <span>₹{{ transaction.amount }}</span>
+                    <a class="delete-btn" href="{% url 'delete_transaction' transaction.id %}"
+                       onclick="return confirm('Are you sure you want to delete this transaction?');">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
                 </li>
             {% endfor %}
         </ul>
-    {% endif %}
 
-    <div class="header">
-        <img src="https://i.ibb.co/jfScDTC/budget.png" alt="Expense Tracker"/>
-        <div class="balance-container">
-            <h2>Your Balance</h2>
-            <h2 id="balance" class="balance">₹{{ current_balance.current_balance }}</h2>
-        </div>
+        <h3>Add new transaction</h3>
+        <form method="POST" id="form" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+            {% csrf_token %}
+            <div class="form-control">
+                <label for="description">Description</label>
+                <input type="text" name="description" id="text" placeholder="Enter description..." required />
+            </div>
+            <div class="form-control">
+                <label for="amount">Amount <br/>
+                    <small>(-100 = expense, 100 = income)</small></label>
+                <input type="number" name="amount" id="amount" placeholder="Enter a positive or negative amount..." required />
+            </div>
+            <button class="btn" type="submit">Add transaction</button>
+        </form>
+
+        <form action="{% url 'logout' %}" method="POST" style="margin-top: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="background-color: red;">Logout</button>
+        </form>
     </div>
-
-    <div class="inc-exp-container">
-        <div>
-            <h4>Income</h4>
-            <p id="money-plus" class="money plus">+₹{{ income }}</p>
-        </div>
-        <div>
-            <h4>Expenses</h4>
-            <p id="money-minus" class="money minus">₹{{ expense }}</p>
-        </div>
-    </div>
-
-    <h3>History</h3>
-    <ul id="list" class="list">
-        {% for transaction in transactions %}
-
-            <li class="{% if transaction.expense_type == 'DEBIT' %} minus {% else %} plus {% endif %}">
-                {{ transaction.description }} <span>₹{{ transaction.amount }}</span>
-                <a class="delete-btn" href="{% url 'delete_transaction' transaction.id %}">
-                    <i class="fas fa-trash-alt"></i></a>
-            </li>
-
-        {% endfor %}
-
-    </ul>
-
-    <h3>Add new transaction</h3>
-    <form method="POST" id="form">
-        {% csrf_token %}
-        <div class="form-control">
-            <label for="description">Description</label>
-            <input type="text" name="description" id="text" placeholder="Enter description..."/>
-        </div>
-        <div class="form-control">
-            <label for="amount">Amount <br/>
-                <small>(-100 = expense, 100 = income)</small></label>
-            <input type="number" name="amount" id="amount" placeholder="Enter a positive or negative amount..."/>
-        </div>
-        <button class="btn" type="submit">Add transaction</button>
-    </form>
-</div>
+{% endblock %}
 
 </body>
 </html>
