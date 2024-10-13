@@ -1,5 +1,5 @@
 from django.contrib import admin
-from tracker.models import *
+from tracker.models import CurrentBalance, TrackingHistory
 
 # Register your models here.
 
@@ -17,8 +17,6 @@ def make_credit(modeladmin, request, queryset):
             obj.amount = obj.amount * -1
             obj.save()
     queryset.update(expense_type="CREDIT")
-
-@admin.action(description="Make it in Debit")
 
 @admin.action(description="Make it in Debit")
 def make_debit(modeladmin, request, queryset):
@@ -44,11 +42,11 @@ class TrackingHistoryAdmin(admin.ModelAdmin):
 
     def display_age(self, obj):
         if obj.amount > 0:
-            return "Postive"
+            return "Positive"
         else:
             return "Negative"
 
-    search_fields = ['expense_type','description']
+    search_fields = ['expense_type', 'description']
     list_filter = ['expense_type']
     ordering = ['-expense_type']
 
